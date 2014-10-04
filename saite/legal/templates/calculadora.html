@@ -1,0 +1,124 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" />
+        <link rel="stylesheet" href="{% static "css/bootstrap-theme.min.css" %}">
+        <script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
+        <script src="{% static "js/jquery-ui-1.10.4.custom.min.js" %}"></script>
+        <script src="{% static "js/bootstrap.min.js" %}"></script>
+        <style>
+            .btn-calculadora {
+                background: url({% static 'img/buttons.jpg' %});
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+            }
+            .soma {
+                background-position: -9px -52px;
+            }
+            .subtracao {
+                background-position: -40px -52px;
+            }
+            .multiplicacao {
+                background-position: -71px -52px;
+            }
+            .divisao {
+                background-position: -101px -52px;
+            }
+            .operadores {
+                float: right;
+            }
+            .botoes {
+                width: 140px;
+                display: inline-block;
+            }
+            .calculadora {
+                width: 245px;
+                padding: 5px;
+
+            }
+            .resultado {
+                text-align: right;
+            }
+            #reset {
+                padding: 6px 11px;
+            }
+        </style>
+    </head>
+    <body>
+        <form action="{% url 'calculadora' %}" method="post" class="form-inline" role="form">
+            {% csrf_token %}
+            <input type="hidden" name="numero_1" id="numero1" />
+            <input type="hidden" name="numero_2" id="numero2" />
+            <div class="calculadora well">
+                <div class="well well-sm resultado">{{ resultado }}</div>
+                <div class="botoes well">
+                    {% for numeros in grupo %}
+                    <div class="btn-group">
+                    {% for numero in numeros %}
+                        {% if numero == "C" %}
+                        <button type="button" class="btn btn-danger reset" id="reset">C</button>
+                        {% elif numero == "=" %}
+                        <button type="submit" class="btn btn-success igual">=</button>
+                        {% else %}
+                        <button type="button" class="btn btn-default numero">{{ numero }}</button>
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="btn-group-vertical operadores well" data-toggle="buttons">
+                    {% for operacao in operacoes %}
+                    <label class="btn btn-default" for="{{ operacao }}">
+                        <input type="radio" name="operacao" value="{{ operacao }}" id="{{ operacao }}" />
+                        <span class="btn-calculadora {{ operacao }}"></span>
+                    </label>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </form>
+        {% if mensagem %}
+            <div class="mensagem">
+                {{ mensagem }}
+            </div>
+        {% endif %}
+        <script type="application/javascript">
+            var resultadoLimpo = false;
+            var $resultado = $(".resultado");
+             var $numero1 = $("#numero1");
+            var $numero2 = $("#numero2");
+            $(".botoes").on("click", ".numero", function() {
+                var valor = $resultado.text();
+                var operadorEscolhido = $(".operadores").find(".active").length > 0;
+                if (operadorEscolhido && !resultadoLimpo) {
+                    valor = "";
+                    resultadoLimpo = true;
+                }
+                if (valor == "0") {
+                    valor = "";
+                }
+                if (valor.length >= 22) {
+                    return false;
+                }
+                var numero = $(this).text();
+                valor = valor + numero;
+                $resultado.text(valor);
+                if (operadorEscolhido) {
+
+                    $numero2.val($resultado.text());
+                }
+                else {
+
+                    $numero1.val($resultado.text());
+                }
+            });
+           $(".calculadora").on("click", "#reset", function() {
+              $resultado.text("0");
+              $numero1.val("0");
+              $numero2.val("0");
+           });
+        </script>
+    </body>
+</html>

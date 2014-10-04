@@ -1,0 +1,22 @@
+<h1>Aula</h1>
+
+        <h2>Você está acessando essa página via método {% if eh_post  %}POST{% else %}GET{% endif %}</h2>
+
+<div>
+    Você enviou:
+    <div>Nome: {{ nome }}</div>
+    <div>Idade: {{ idade }}</div>
+    <div>Extra: {{ extra }}</div>
+</div>
+
+<form action="aula" method="post">
+    {% csrf_token %}
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome"/>
+    <label for="idade">Sua idade:</label>
+    <input type="text" id="idade" name="idade"/>
+    <button type="submit">Manda ae!</button>
+</form>
+
+<a href="/outra">Vá para a outra</a>
+
