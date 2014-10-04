@@ -6,6 +6,7 @@ import sys
 z = 0
 
 
+
 def somar():
     a, b, c, d = sys.argv[1:]
     a = int(a)
